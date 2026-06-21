@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+@theme {
+  /* === COLOR TOKENS (exact match duniakedol.id) === */
+  --color-dark-bg: rgb(10, 15, 10);
+  /* #0a0f0a */
+  --color-dark-surface: rgb(26, 31, 26);
+  /* #1a1f1a */
+  --color-deep-green: rgb(0, 255, 136);
+  /* #00ff88 */
+  --color-off-white: rgb(245, 245, 245);
+  /* #f5f5f5 */
+  --color-gray-text: rgb(161, 161, 170);
+  /* #a1a1aa */
+  --color-border-dark: rgb(39, 39, 42);
+  /* #27272a */
+
+  /* === FONT === */
+  --font-sans: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* Base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: rgb(10, 15, 10);
+  color: rgb(245, 245, 245);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* Custom Neon Green Cursor - Arrow */
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='%2300ff88' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 2L18.4 12.3L11.5 13.9L16.2 21L13.8 22.5L9.1 15.5L4 19.5V2Z' stroke='%230a0f0a' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E"), auto;
+}
+
+/* Custom Neon Green Cursor - Pointer */
+a,
+button,
+[role="button"],
+input[type="submit"],
+input[type="button"] {
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='%2300ff88' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 11.5V3.5C9 2.67 9.67 2 10.5 2C11.33 2 12 2.67 12 3.5V10.5H12.5C12.5 9.67 13.17 9 14 9C14.83 9 15.5 9.67 15.5 10.5V11.5H16C16 10.17 16.67 9.5 17.5 9.5C18.33 9.5 19 10.17 19 11.5V16.5C19 19.53 16.53 22 13.5 22H9.5C6.47 22 4 19.53 4 16.5V12.5C4 11.67 4.67 11 5.5 11C6.33 11 7 11.67 7 12.5V14H7.5V11.5H9Z' stroke='%230a0f0a' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2, pointer;
+}
+
+input,
+textarea {
+  caret-color: var(--color-deep-green);
+}
+
+/* Monospace elements */
+code,
+kbd,
+pre,
+samp {
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(0, 255, 136, 0.2);
+  color: rgb(245, 245, 245);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(10, 15, 10);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 136, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 136, 0.5);
+}
+
+/* Particle Canvas */
+canvas#particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* Scroll-reveal animation states */
+.reveal {
+  opacity: 0;
+  transform: translateY(2.5rem);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delayed reveal variants */
+.reveal-delay-100 {
+  transition-delay: 100ms;
+}
+
+.reveal-delay-150 {
+  transition-delay: 150ms;
+}
+
+.reveal-delay-200 {
+  transition-delay: 200ms;
+}
+
+.reveal-delay-300 {
+  transition-delay: 300ms;
+}
+
+.reveal-delay-400 {
+  transition-delay: 400ms;
+}
+
+.reveal-delay-500 {
+  transition-delay: 500ms;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Toast enter animation */
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toast-enter {
+  animation: toast-enter 0.25s ease forwards;
+  position: relative;
+}
+
+/* Dashboard scrollbar */
+.dashboard-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.dashboard-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dashboard-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 136, 0.2);
+  border-radius: 2px;
+}
