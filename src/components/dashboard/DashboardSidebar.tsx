@@ -19,6 +19,7 @@ import { useToast } from "@/components/ui/ToastProvider";
 interface SidebarUser {
   name: string;
   email: string;
+  picture?: string;
 }
 
 const NAV_ITEMS = [
@@ -113,9 +114,13 @@ export function DashboardSidebar({ user }: { user: SidebarUser }) {
       <div className="border-t border-[#27272a] p-4 space-y-3">
         {/* User info */}
         <div className="flex items-center gap-3 px-1">
-          <div className="w-9 h-9 bg-[#00ff88]/15 border border-[#00ff88]/30 flex items-center justify-center text-[#00ff88] text-xs font-bold shrink-0">
-            {initials}
-          </div>
+          {user.picture ? (
+            <img src={user.picture} alt={user.name} className="w-9 h-9 rounded-none border border-[#00ff88]/30 shrink-0 object-cover" referrerPolicy="no-referrer" />
+          ) : (
+            <div className="w-9 h-9 bg-[#00ff88]/15 border border-[#00ff88]/30 flex items-center justify-center text-[#00ff88] text-xs font-bold shrink-0">
+              {initials}
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="text-[#f5f5f5] text-sm font-medium truncate">{user.name}</p>
             <p className="text-[#52525b] text-xs truncate">{user.email}</p>

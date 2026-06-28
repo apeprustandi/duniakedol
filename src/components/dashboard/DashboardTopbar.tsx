@@ -4,9 +4,10 @@ interface DashboardTopbarProps {
   title: string;
   subtitle?: string;
   userName: string;
+  userPicture?: string;
 }
 
-export function DashboardTopbar({ title, subtitle, userName }: DashboardTopbarProps) {
+export function DashboardTopbar({ title, subtitle, userName, userPicture }: DashboardTopbarProps) {
   const initials = userName
     .split(" ")
     .map((w) => w[0])
@@ -38,9 +39,13 @@ export function DashboardTopbar({ title, subtitle, userName }: DashboardTopbarPr
 
         {/* User avatar */}
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-[#00ff88]/15 border border-[#00ff88]/30 flex items-center justify-center text-[#00ff88] text-xs font-bold">
-            {initials}
-          </div>
+          {userPicture ? (
+            <img src={userPicture} alt={userName} className="w-8 h-8 rounded-none border border-[#00ff88]/30 object-cover" referrerPolicy="no-referrer" />
+          ) : (
+            <div className="w-8 h-8 bg-[#00ff88]/15 border border-[#00ff88]/30 flex items-center justify-center text-[#00ff88] text-xs font-bold">
+              {initials}
+            </div>
+          )}
           <span className="hidden sm:block text-[#a1a1aa] text-xs truncate max-w-[120px]">
             {userName}
           </span>

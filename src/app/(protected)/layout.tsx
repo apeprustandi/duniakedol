@@ -18,7 +18,7 @@ export default async function ProtectedLayout({
 
   if (!payload) redirect("/login");
 
-  const user = { name: payload.name, email: payload.email };
+  const user = { name: payload.name, email: payload.email, picture: payload.picture };
 
   return (
     <div className="flex h-screen bg-[#0a0f0a] overflow-hidden">

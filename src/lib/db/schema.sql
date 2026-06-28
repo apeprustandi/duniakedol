@@ -3,29 +3,19 @@
 -- Project → SQL Editor → paste dan run
 -- ============================================================
 
--- Tabel users (tanpa password — auth via OTP email)
+-- Tabel users
 CREATE TABLE IF NOT EXISTS users (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  full_name  TEXT NOT NULL,
+  name       TEXT NOT NULL,
   email      TEXT UNIQUE NOT NULL,
+  google_id  TEXT UNIQUE,
+  picture_url TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
-
--- Tabel OTP codes
-CREATE TABLE IF NOT EXISTS otp_codes (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email      TEXT NOT NULL,
-  code       TEXT NOT NULL,
-  type       TEXT NOT NULL CHECK (type IN ('register', 'login')),
-  expires_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE INDEX IF NOT EXISTS otp_email_idx ON otp_codes (email);
+CREATE INDEX IF NOT EXISTS users_google_id_idx ON users (google_id);
 
 -- ============================================================
--- Jika tabel users SUDAH ADA dengan kolom password, jalankan:
--- ALTER TABLE users DROP COLUMN IF EXISTS password;
+-- Tabel otp_codes telah dihapus.
 -- ============================================================

@@ -23,6 +23,7 @@ export interface JwtPayload {
   sub: string; // user id
   email: string;
   name: string;
+  picture?: string;
 }
 
 export function signToken(payload: JwtPayload): string {

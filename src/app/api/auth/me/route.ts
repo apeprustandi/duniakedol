@@ -4,8 +4,10 @@ import { query } from "@/lib/db";
 
 interface UserRow {
   id: string;
-  full_name: string;
+  name: string;
   email: string;
+  google_id: string;
+  picture_url: string;
   created_at: string;
 }
 
@@ -23,7 +25,7 @@ export async function GET() {
 
     /* ── Fetch fresh user data from DB ──────────────────────── */
     const [user] = await query<UserRow>(
-      "SELECT id, full_name, email, created_at FROM users WHERE id = $1",
+      "SELECT id, name, email, google_id, picture_url, created_at FROM users WHERE id = $1",
       [payload.sub]
     );
 
@@ -34,8 +36,11 @@ export async function GET() {
     return NextResponse.json({
       user: {
         id: user.id,
-        fullName: user.full_name,
+        fullName: user.name, // Keep as fullName for frontend backwards compatibility if needed, or change frontend later
+        name: user.name,
         email: user.email,
+        googleId: user.google_id,
+        pictureUrl: user.picture_url,
         createdAt: user.created_at,
       },
     });

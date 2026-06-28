@@ -78,6 +78,7 @@ export default async function DashboardPage() {
         title="Dashboard"
         subtitle={`${greeting}, ${userName}!`}
         userName={userName}
+        userPicture={payload?.picture}
       />
 
       {/* Page content */}
