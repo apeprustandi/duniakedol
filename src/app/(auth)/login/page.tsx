@@ -25,7 +25,7 @@ export default function LoginPage() {
       const data = await res.json();
       
       if (!res.ok) {
-        toast.error(data.error ?? "Login gagal.");
+        toast.error(data.error ?? "Autentikasi gagal.");
         return;
       }
       
@@ -63,10 +63,10 @@ export default function LoginPage() {
                 <span className="text-[#00ff88] font-bold text-lg tracking-wide">Dunia<span className="text-[#f5f5f5]"> </span>Kedol</span>
               </Link>
               <div className="inline-block border border-[#00ff88]/30 px-3 py-1 mb-4 ml-3">
-                <span className="text-[#00ff88] text-xs tracking-widest uppercase">// member login</span>
+                <span className="text-[#00ff88] text-xs tracking-widest uppercase">// auth</span>
               </div>
               <h1 className="text-3xl font-bold text-[#f5f5f5] mb-2">Selamat Datang</h1>
-              <p className="text-[#a1a1aa] text-sm">Masuk dengan akun Google Anda</p>
+              <p className="text-[#a1a1aa] text-sm">Masuk atau Daftar dengan akun Google Anda</p>
             </div>
 
             {/* Card */}
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
               {/* Terminal hint */}
               <div className="mt-8 p-3 bg-[#0a0f0a] border border-[#27272a] font-mono text-xs text-[#a1a1aa]">
-                <span className="text-[#00ff88]">$</span> dkl auth login <span className="text-[#52525b]">--method google</span>
+                <span className="text-[#00ff88]">$</span> dkl auth <span className="text-[#52525b]">--method google</span>
               </div>
             </div>
           </div>

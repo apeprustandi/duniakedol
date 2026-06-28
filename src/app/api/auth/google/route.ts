@@ -24,10 +24,18 @@ export async function POST(req: Request) {
       idToken: credential,
       audience: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     });
-    
+
     const payload = ticket.getPayload();
     if (!payload || !payload.email) {
       return NextResponse.json({ error: "Invalid Google token" }, { status: 401 });
+    }
+
+    // Blokir akun Workspace / GSuite (memiliki hd) dan pastikan email berakhiran @gmail.com
+    if (payload.hd || !payload.email.endsWith("@gmail.com")) {
+      return NextResponse.json(
+        { error: "Hanya akun @gmail.com standar yang diizinkan." },
+        { status: 403 }
+      );
     }
 
     const { email, name, sub: google_id, picture } = payload;

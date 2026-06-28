@@ -18,7 +18,7 @@ export function CtaSection() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/register"
+              href="/login"
               className="bg-[#00ff88] text-[#0a0f0a] px-8 py-3 font-bold text-sm tracking-wide hover:bg-[#f5f5f5] transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-[#00ff88]/20"
             >
               Gabung Sekarang →

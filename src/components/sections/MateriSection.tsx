@@ -47,7 +47,7 @@ export function MateriSection() {
             Daftar untuk akses semua materi ini secara lengkap.
           </p>
           <Link
-            href="/register"
+            href="/login"
             className="inline-flex items-center gap-2 text-[#00ff88] border border-[#00ff88]/40 px-6 py-3 text-sm font-semibold hover:bg-[#00ff88]/10 transition-colors"
           >
             Daftar Sekarang <span>&rarr;</span>

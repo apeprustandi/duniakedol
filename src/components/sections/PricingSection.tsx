@@ -75,7 +75,7 @@ export function PricingSection() {
                 ))}
               </ul>
 
-              <Link href="/register" className={tier.ctaClass}>
+              <Link href="/login" className={tier.ctaClass}>
                 {tier.ctaLabel}
               </Link>
             </div>

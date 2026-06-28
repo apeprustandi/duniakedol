@@ -35,7 +35,7 @@ export function Navbar() {
     }
   };
 
-  if (pathname === "/login" || pathname === "/register") {
+  if (pathname === "/login") {
     return null;
   }
 
