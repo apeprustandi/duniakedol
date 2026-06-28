@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
       args:
         # Diteruskan ke Dockerfile ARG saat build — NEXT_PUBLIC_ di-embed ke JS bundle
-        - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+        - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
     container_name: duniakedol
     ports:
       - "3003:3003"
@@ -18,7 +18,4 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
-      - GMAIL_USER=${GMAIL_USER}
-      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
-      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
     restart: unless-stopped
