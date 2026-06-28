@@ -32,11 +32,16 @@ export async function middleware(req: NextRequest) {
 
   if (token) {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+      const secretKey = process.env.JWT_SECRET;
+      if (!secretKey) {
+        console.error("CRITICAL ERROR: JWT_SECRET is not defined in environment variables.");
+        throw new Error("Missing JWT_SECRET");
+      }
+      const secret = new TextEncoder().encode(secretKey);
       await jwtVerify(token, secret);
       isValid = true;
     } catch {
-      // Token expired or tampered — treat as unauthenticated
+      // Token expired, tampered, or missing secret — treat as unauthenticated
     }
   }
 

@@ -40,23 +40,18 @@ export async function POST(req: Request) {
 
     const { email, name, sub: google_id, picture } = payload;
 
-    // Check if user exists
-    let [user] = await query<UserRow>("SELECT id, name, email FROM users WHERE email = $1", [email]);
-
-    if (user) {
-      // Update google_id and picture_url if they login with google but it was an existing email
-      await query(
-        "UPDATE users SET google_id = $1, name = $2, picture_url = $3 WHERE email = $4",
-        [google_id, name, picture, email]
-      );
-    } else {
-      // Create new user
-      const result = await query<UserRow>(
-        "INSERT INTO users (email, name, google_id, picture_url) VALUES ($1, $2, $3, $4) RETURNING id, name, email",
-        [email, name, google_id, picture]
-      );
-      user = result[0];
-    }
+    // Gunakan UPSERT untuk mencegah race condition dan menghemat query
+    const result = await query<UserRow>(
+      `INSERT INTO users (email, name, google_id, picture_url)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (email) DO UPDATE 
+       SET google_id = EXCLUDED.google_id, 
+           name = EXCLUDED.name, 
+           picture_url = EXCLUDED.picture_url
+       RETURNING id, name, email`,
+      [email, name, google_id, picture]
+    );
+    const user = result[0];
 
     // Create JWT token and set cookie
     const token = signToken({

@@ -1,4 +1,7 @@
-import { FiBell } from "react-icons/fi";
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FiBell, FiLogOut } from "react-icons/fi";
 
 interface DashboardTopbarProps {
   title: string;
@@ -8,6 +11,21 @@ interface DashboardTopbarProps {
 }
 
 export function DashboardTopbar({ title, subtitle, userName, userPicture }: DashboardTopbarProps) {
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+      setLoggingOut(false);
+    }
+  };
+
   const initials = userName
     .split(" ")
     .map((w) => w[0])
@@ -49,6 +67,16 @@ export function DashboardTopbar({ title, subtitle, userName, userPicture }: Dash
           <span className="hidden sm:block text-[#a1a1aa] text-xs truncate max-w-[120px]">
             {userName}
           </span>
+
+          {/* Logout */}
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            aria-label="Logout"
+            className="ml-2 relative text-[#a1a1aa] hover:text-red-500 transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FiLogOut className="text-lg" />
+          </button>
         </div>
       </div>
     </header>
