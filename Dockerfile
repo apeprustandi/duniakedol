@@ -3,8 +3,8 @@ FROM oven/bun:1-alpine AS deps
 # Tambahkan libc6-compat jika Next.js SWC compiler membutuhkannya
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-# PERUBAHAN: Salin bun.lockb, bukan package-lock.json
-COPY package.json bun.lockb ./
+# PERUBAHAN: Salin bun.lock, bukan package-lock.json
+COPY package.json bun.lock ./
 # PERUBAHAN: Gunakan perintah bun install
 RUN bun install --frozen-lockfile
 
