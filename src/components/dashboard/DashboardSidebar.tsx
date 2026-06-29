@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   FiGrid,
   FiBook,
@@ -9,18 +9,10 @@ import {
   FiMap,
   FiCpu,
   FiSettings,
-  FiLogOut,
   FiMenu,
   FiX,
   FiChevronRight,
 } from "react-icons/fi";
-import { useToast } from "@/components/ui/ToastProvider";
-
-interface SidebarUser {
-  name: string;
-  email: string;
-  picture?: string;
-}
 
 const NAV_ITEMS = [
   { label: "Dashboard",  href: "/dashboard",   icon: FiGrid },
@@ -31,35 +23,9 @@ const NAV_ITEMS = [
   { label: "Settings",   href: "/settings",     icon: FiSettings },
 ];
 
-export function DashboardSidebar({ user }: { user: SidebarUser }) {
-  const router = useRouter();
+export function DashboardSidebar() {
   const pathname = usePathname();
-  const toast = useToast();
   const [open, setOpen] = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
-
-  async function handleLogout() {
-    setLoggingOut(true);
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      toast.info("Kamu telah keluar. Sampai jumpa! 👋");
-      setTimeout(() => {
-        router.push("/login");
-        router.refresh();
-      }, 800);
-    } catch {
-      toast.error("Gagal logout. Coba lagi.");
-      setLoggingOut(false);
-    }
-  }
-
-  /* ── User initials avatar ─────────────────────────────────── */
-  const initials = user.name
-    .split(" ")
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -109,35 +75,6 @@ export function DashboardSidebar({ user }: { user: SidebarUser }) {
           );
         })}
       </nav>
-
-      {/* User + Logout */}
-      <div className="border-t border-[#27272a] p-4 space-y-3">
-        {/* User info */}
-        <div className="flex items-center gap-3 px-1">
-          {user.picture ? (
-            <img src={user.picture} alt={user.name} className="w-9 h-9 rounded-none border border-[#00ff88]/30 shrink-0 object-cover" referrerPolicy="no-referrer" />
-          ) : (
-            <div className="w-9 h-9 bg-[#00ff88]/15 border border-[#00ff88]/30 flex items-center justify-center text-[#00ff88] text-xs font-bold shrink-0">
-              {initials}
-            </div>
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="text-[#f5f5f5] text-sm font-medium truncate">{user.name}</p>
-            <p className="text-[#52525b] text-xs truncate">{user.email}</p>
-          </div>
-        </div>
-
-        {/* Logout */}
-        <button
-          id="dashboard-logout"
-          onClick={handleLogout}
-          disabled={loggingOut}
-          className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-[#a1a1aa] hover:text-red-400 hover:bg-red-500/8 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          <FiLogOut className="text-base" />
-          {loggingOut ? "Keluar..." : "Logout"}
-        </button>
-      </div>
     </div>
   );
 

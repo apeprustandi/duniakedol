@@ -76,8 +76,8 @@ export default async function DashboardPage() {
       {/* Topbar */}
       <DashboardTopbar
         title="Dashboard"
-        subtitle={`${greeting}, ${userName}!`}
         userName={userName}
+        userEmail={payload?.email}
         userPicture={payload?.picture}
       />
 

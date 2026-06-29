@@ -36,7 +36,6 @@ export async function GET() {
     return NextResponse.json({
       user: {
         id: user.id,
-        fullName: user.name, // Keep as fullName for frontend backwards compatibility if needed, or change frontend later
         name: user.name,
         email: user.email,
         googleId: user.google_id,

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/ToastProvider";
+import { GoogleAuthProvider } from "@/components/ui/GoogleAuthProvider";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -13,6 +14,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://duniakedol.online"),
   title: {
     template: "%s | Dunia Kedol",
     default: "Dunia Kedol — Komunitas Belajar Node.js & Automasi",
@@ -64,9 +66,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${jetbrainsMono.variable} scroll-smooth`}>
+    <html lang="id" className={`${jetbrainsMono.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="font-mono antialiased">
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <GoogleAuthProvider>
+            {children}
+          </GoogleAuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

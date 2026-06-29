@@ -7,8 +7,8 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-06B6D4?logo=tailwindcss&logoColor=white)
 ![Neon](https://img.shields.io/badge/Neon-PostgreSQL-00E5CC?logo=postgresql&logoColor=white)
-![Nodemailer](https://img.shields.io/badge/Nodemailer-Gmail_OTP-EA4335?logo=gmail&logoColor=white)
-![Cloudflare Turnstile](https://img.shields.io/badge/Cloudflare-Turnstile-F38020?logo=cloudflare&logoColor=white)
+![Google OAuth](https://img.shields.io/badge/Google-OAuth_2.0-4285F4?logo=google&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-runtime-fbf0df?logo=bun&logoColor=black)
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -19,8 +19,8 @@
 **Dunia Kedol (DKL)** adalah platform komunitas berbasis web untuk belajar Node.js dan automasi web secara bersama-sama — lewat materi terstruktur, automation challenges, Bot Lab, dan forum diskusi yang aktif.
 
 Dibangun menggunakan **Next.js 16 App Router**, **React 19**, **TypeScript**, dan **Tailwind CSS v4**, dengan:
-- Tampilan dark-mode menggunakan font **JetBrains Mono** dan efek partikel animasi interaktif
-- Sistem autentikasi **tanpa password** — login & register menggunakan **OTP 6 digit via Gmail** (Nodemailer)
+- Tampilan dark-mode menggunakan efek partikel animasi interaktif dan terminal-style UI
+- Sistem autentikasi **Google OAuth 2.0** — login & register menggunakan akun `@gmail.com`
 - Halaman **dashboard** member yang dilindungi middleware Edge Runtime
 - Custom 404 / halaman "fitur dalam pengembangan" dengan progress tracker
 
@@ -35,36 +35,42 @@ Dibangun menggunakan **Next.js 16 App Router**, **React 19**, **TypeScript**, da
 | [TypeScript](https://www.typescriptlang.org) | 5.x | Type safety |
 | [Tailwind CSS](https://tailwindcss.com) | 4.x | Utility-first CSS |
 | [Neon](https://neon.tech) | serverless | PostgreSQL database |
-| [Nodemailer](https://nodemailer.com) | ^6.x | Kirim OTP via Gmail SMTP |
+| [@react-oauth/google](https://github.com/MomenSherif/react-oauth) | ^0.13.5 | Google OAuth 2.0 client |
+| [google-auth-library](https://github.com/googleapis/google-auth-library-nodejs) | ^10.9.0 | Verifikasi Google ID token (server-side) |
 | [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) | ^9.x | JWT session (API Routes) |
 | [jose](https://github.com/panva/jose) | ^6.x | JWT verification (Edge middleware) |
-| [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) | — | Font utama via `next/font/google` |
-| [React Icons](https://react-icons.github.io) | ^5.6.0 | Icon library |
-| [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile) | — | CAPTCHA-free bot protection pada form register |
+| [Lucide React](https://lucide.dev) | ^1.18.0 | Icon library |
+| [React Icons](https://react-icons.github.io) | ^5.6.0 | Icon library tambahan |
+| [Bun](https://bun.sh) | 1.x | Runtime & package manager (Docker) |
 
 ---
 
 ## 📁 Struktur Proyek
 
 ```
-etl-clone/
+dkl-google-auth/
 ├── middleware.ts                       # Edge JWT guard — proteksi route
 ├── src/
 │   ├── app/
+│   │   ├── (auth)/                     # Route group: halaman autentikasi
+│   │   │   ├── layout.tsx              # Layout minimal tanpa Navbar
+│   │   │   └── login/page.tsx          # Halaman login via Google OAuth (/login)
 │   │   ├── (marketing)/                # Route group: landing page
 │   │   │   ├── layout.tsx              # Layout dengan Navbar, Footer, Particle
 │   │   │   └── page.tsx                # Halaman utama (/)
-│   │   ├── (auth)/                     # Route group: login & register
-│   │   │   ├── layout.tsx              # Layout minimal tanpa Navbar
-│   │   │   ├── login/page.tsx          # Halaman login via OTP (/login)
-│   │   │   └── register/page.tsx       # Halaman register via OTP (/register)
 │   │   ├── (protected)/                # Route group: halaman yang butuh auth
 │   │   │   ├── layout.tsx              # Layout dashboard (sidebar)
-│   │   │   └── dashboard/page.tsx      # Halaman dashboard (/dashboard)
+│   │   │   ├── dashboard/page.tsx      # Halaman dashboard (/dashboard)
+│   │   │   ├── materi/page.tsx         # Halaman kurikulum (/materi)
+│   │   │   ├── challenges/page.tsx     # Halaman automation challenges (/challenges)
+│   │   │   ├── botlab/page.tsx         # Halaman eksperimental bot (/botlab)
+│   │   │   ├── roadmap/page.tsx        # Halaman peta belajar (/roadmap)
+│   │   │   └── settings/
+│   │   │       ├── page.tsx            # Halaman pengaturan (/settings)
+│   │   │       └── SettingsClient.tsx  # Interactive UI settings
 │   │   ├── api/
 │   │   │   └── auth/
-│   │   │       ├── send-otp/route.ts   # POST /api/auth/send-otp
-│   │   │       ├── verify-otp/route.ts # POST /api/auth/verify-otp
+│   │   │       ├── google/route.ts     # POST /api/auth/google — Google OAuth
 │   │   │       ├── logout/route.ts     # POST /api/auth/logout
 │   │   │       └── me/route.ts         # GET  /api/auth/me
 │   │   ├── not-found.tsx               # Custom 404 / coming-soon page
@@ -73,84 +79,102 @@ etl-clone/
 │   ├── components/
 │   │   ├── dashboard/
 │   │   │   ├── DashboardSidebar.tsx    # Sidebar responsif + logout
-│   │   │   ├── DashboardTopbar.tsx     # Topbar dengan user info
+│   │   │   ├── DashboardTopbar.tsx     # Topbar dengan user info & avatar
 │   │   │   └── StatCard.tsx            # Kartu statistik reusable
 │   │   ├── layout/
 │   │   │   ├── Navbar.tsx              # Navigation bar landing
 │   │   │   └── Footer.tsx              # Footer landing
 │   │   ├── sections/                   # Seksi-seksi landing page
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── StatsSection.tsx
+│   │   │   ├── FeaturesSection.tsx
+│   │   │   ├── MateriSection.tsx
+│   │   │   ├── ChallengesSection.tsx
+│   │   │   ├── BotLabSection.tsx
+│   │   │   ├── RoadmapSection.tsx
+│   │   │   ├── HowItWorksSection.tsx
+│   │   │   ├── CommunitySection.tsx
+│   │   │   ├── PricingSection.tsx
+│   │   │   └── CtaSection.tsx
 │   │   └── ui/
+│   │       ├── Button.tsx
+│   │       ├── Card.tsx
+│   │       ├── FeatureCard.tsx
+│   │       ├── GoogleAuthProvider.tsx  # Singleton wrapper Google OAuth SDK
+│   │       ├── ParticleCanvas.tsx
+│   │       ├── ScrollReveal.tsx
+│   │       ├── SectionHeader.tsx
+│   │       ├── TerminalBlock.tsx
 │   │       └── ToastProvider.tsx       # Toast notification system
+│   ├── hooks/
+│   │   └── useTerminalTyping.ts        # Custom hook — terminal typing effect
 │   └── lib/
 │       ├── auth.ts                     # JWT + cookie helpers
-│       ├── db.ts                       # Neon serverless client wrapper
-│       ├── otp.ts                      # OTP service (generate, store, verify, email)
+│       ├── db.ts                       # Neon serverless client wrapper (lazy init)
+│       ├── data/                       # Static data: pricing, roadmap, challenges, dll.
+│       │   ├── botlab.tsx
+│       │   ├── challenges.tsx
+│       │   ├── features.tsx
+│       │   ├── materi.tsx
+│       │   ├── pricing.ts
+│       │   ├── roadmap.ts
+│       │   └── steps.ts
 │       ├── db/
-│       │   └── schema.sql              # Skema tabel users + otp_codes
+│       │   └── schema.sql              # Skema tabel users
 │       └── types/
 │           └── index.ts                # Shared TypeScript interfaces
 ├── public/
-├── Dockerfile
+├── Dockerfile                          # Multi-stage build (Bun + Alpine)
 ├── docker-compose.yml
 ├── next.config.ts
+├── tailwind.config.ts
 └── package.json
 ```
 
 ---
 
-## 🔐 Sistem Autentikasi (OTP Email)
+## 🔐 Sistem Autentikasi (Google OAuth 2.0)
 
-DKL menggunakan autentikasi **passwordless** — tidak ada password yang disimpan. Login dan register menggunakan **OTP 6 digit** yang dikirim ke Gmail.
+DKL menggunakan autentikasi **Google OAuth 2.0** — tidak ada password yang disimpan. Login dan register dilakukan dengan satu klik menggunakan akun `@gmail.com`.
 
-### Alur Register
+### Alur Login / Register
 ```
-1. User isi Nama Lengkap + Email @gmail.com
-2. Selesaikan Cloudflare Turnstile (verifikasi keamanan anti-bot)
-3. Klik [Kirim OTP] → POST /api/auth/send-otp {fullName, email, type:"register", turnstileToken}
-   ├─ Validasi Turnstile token ke Cloudflare siteverify API
-   ├─ Validasi email @gmail.com & nama minimal 2 karakter
-   ├─ Cek email belum terdaftar
-   ├─ Rate limit: tolak jika OTP dikirim < 60 detik yang lalu
-   ├─ Generate OTP 6 digit (crypto.randomInt)
-   ├─ Simpan di tabel otp_codes (expires 10 menit)
-   └─ Kirim email via Nodemailer (Gmail SMTP)
-4. User isi 6 kotak OTP (auto-focus, support paste)
-5. Klik [Verifikasi] → POST /api/auth/verify-otp {fullName, email, otp, type:"register"}
-   ├─ Verifikasi OTP valid & belum expired
-   ├─ INSERT user ke tabel users (nama diformat ProperCase)
-   ├─ Hapus OTP dari DB
+1. User klik tombol [Continue with Google]
+2. Google Sign-In popup terbuka
+3. User pilih akun Google @gmail.com
+4. Credential (ID Token) dikirim ke POST /api/auth/google
+   ├─ Verifikasi token via Google Auth Library (server-side)
+   ├─ Blokir akun Workspace / GSuite (cek payload.hd)
+   ├─ Validasi hanya @gmail.com standar
+   ├─ UPSERT user ke tabel users (insert jika baru, update jika sudah ada)
+   │    kolom: email, name, google_id, picture_url
    └─ Set JWT cookie (7 hari) → redirect /dashboard
 ```
 
-### Alur Login
+### Alur Logout
 ```
-1. User isi Email @gmail.com
-2. Klik [Kirim OTP] → POST /api/auth/send-otp {email, type:"login"}
-   ├─ Cek email SUDAH terdaftar
-   └─ Generate & kirim OTP
-3. User isi OTP
-4. Klik [Verifikasi] → POST /api/auth/verify-otp {email, otp, type:"login"}
-   ├─ Verifikasi OTP
-   └─ Set JWT cookie → redirect /dashboard
+1. Klik tombol [Logout] di sidebar
+2. googleLogout()              → revoke Google session di browser
+3. POST /api/auth/logout       → hapus JWT cookie di server (maxAge: 0)
+4. redirect /login
 ```
 
 ### Keamanan
 | Aspek | Implementasi |
 |---|---|
-| **Bot protection** | Cloudflare Turnstile — verifikasi invisible/silent di form register |
-| OTP | `crypto.randomInt(100000, 1000000)` — cryptographically random |
-| OTP expiry | 10 menit sejak dikirim |
-| Rate limit | Maksimal 1 OTP per 60 detik per email |
+| **Auth provider** | Google OAuth 2.0 — verifikasi token via `google-auth-library` |
+| Token verification | `OAuth2Client.verifyIdToken()` — validasi signature & audience |
+| Email filter | Hanya `@gmail.com` personal (workspace/GSuite diblokir via `payload.hd`) |
 | Session | JWT `httpOnly` cookie, 7 hari, `secure` di production |
-| Email | Hanya `@gmail.com` yang diterima |
-| Nama | Diformat otomatis ke **ProperCase** sebelum disimpan |
+| **Logout** | `googleLogout()` revoke Google session + cookie dihapus dengan `maxAge: 0` (cross-browser) |
 | Middleware | JWT diverifikasi via `jose` di Edge Runtime setiap request |
+| Cookie name | `dkl_token` |
 
 ### Route Protection (middleware.ts)
 | Route | Behaviour |
 |---|---|
 | `/dashboard`, `/materi`, `/challenges`, dll. | Redirect `/login` jika tidak ada JWT valid |
-| `/login`, `/register` | Redirect `/dashboard` jika sudah login |
+| `/login` | Redirect `/dashboard` jika sudah login |
 | `/` | Pass-through |
 
 ---
@@ -158,18 +182,31 @@ DKL menggunakan autentikasi **passwordless** — tidak ada password yang disimpa
 ## ⚙️ Memulai — Development
 
 ### Prasyarat
-- **Node.js** ≥ 20.x
+- **Node.js** ≥ 20.x atau **[Bun](https://bun.sh)** ≥ 1.x
 - Akun **[Neon.tech](https://neon.tech)** (gratis)
-- Akun Gmail dengan **App Password** aktif
+- **Google Cloud Console** — OAuth 2.0 Client ID
 
 ### 1. Clone & Install
 ```bash
 git clone https://github.com/apeprustandi/duniakedol.git
 cd duniakedol
+
+# Menggunakan Bun (direkomendasikan)
+bun install
+
+# Atau npm
 npm install
 ```
 
-### 2. Setup Environment
+### 2. Setup Google OAuth
+1. Buka [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services** → **Credentials**
+2. Buat **OAuth 2.0 Client ID** (tipe: *Web application*)
+3. Tambahkan ke **Authorized JavaScript origins**:
+   - `http://localhost:3003` (development)
+   - `https://duniakedol.online` (production)
+4. Salin **Client ID**
+
+### 3. Setup Environment
 Buat file `.env.local` di root proyek:
 
 ```env
@@ -180,50 +217,50 @@ DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require
 # Generate: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 JWT_SECRET=ganti-dengan-secret-panjang
 
-# Gmail SMTP — gunakan App Password, BUKAN password Gmail biasa
-# Buat App Password: Google Account → Security → 2-Step Verification → App Passwords
-GMAIL_USER=akunmu@gmail.com
-GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
-
-# Cloudflare Turnstile — dari dash.cloudflare.com → Turnstile
-# Site key (publik, aman di-expose ke browser)
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
-# Secret key (JANGAN di-commit ke Git!)
-TURNSTILE_SECRET_KEY=0x4AAAAAAA...
+# Google OAuth 2.0 Client ID
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=xxxxxxxxxxxx-xxxxxxxxxxxxxxxx.apps.googleusercontent.com
 ```
 
-### 3. Setup Database
+### 4. Setup Database
 Jalankan di **Neon SQL Editor** ([console.neon.tech](https://console.neon.tech)):
 
 ```sql
--- Tabel users (tanpa password)
+-- Tabel users (tanpa password, auth via Google)
 CREATE TABLE IF NOT EXISTS users (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  full_name  TEXT NOT NULL,
-  email      TEXT UNIQUE NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name        TEXT NOT NULL,
+  email       TEXT UNIQUE NOT NULL,
+  google_id   TEXT UNIQUE,
+  picture_url TEXT,
+  created_at  TIMESTAMPTZ DEFAULT now()
 );
-CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
 
--- Tabel OTP codes
-CREATE TABLE IF NOT EXISTS otp_codes (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email      TEXT NOT NULL,
-  code       TEXT NOT NULL,
-  type       TEXT NOT NULL CHECK (type IN ('register', 'login')),
-  expires_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS otp_email_idx ON otp_codes (email);
+CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
+CREATE INDEX IF NOT EXISTS users_google_id_idx ON users (google_id);
 ```
 
-> **Migrasi dari versi lama (dengan password)?**
+> **Migrasi dari versi lama (OTP Email)?**
 > ```sql
-> ALTER TABLE users DROP COLUMN IF EXISTS password;
+> -- Hapus tabel OTP yang sudah tidak digunakan
+> DROP TABLE IF EXISTS otp_codes;
+>
+> -- Tambah kolom baru jika belum ada
+> ALTER TABLE users
+>   ADD COLUMN IF NOT EXISTS google_id TEXT UNIQUE,
+>   ADD COLUMN IF NOT EXISTS picture_url TEXT;
+>
+> -- Hapus kolom lama jika ada
+> ALTER TABLE users
+>   DROP COLUMN IF EXISTS full_name,
+>   DROP COLUMN IF EXISTS password;
 > ```
 
-### 4. Jalankan Dev Server
+### 5. Jalankan Dev Server
 ```bash
+# Bun
+bun run dev
+
+# Atau npm
 npm run dev
 ```
 
@@ -232,10 +269,10 @@ Buka [http://localhost:3003](http://localhost:3003).
 ### Scripts yang Tersedia
 | Script | Perintah | Keterangan |
 |---|---|---|
-| Development | `npm run dev` | Dev server di port **3003** |
-| Build | `npm run build` | Build production bundle |
-| Start | `npm run start` | Production server di port **3003** |
-| Lint | `npm run lint` | Cek kode dengan ESLint |
+| Development | `bun run dev` / `npm run dev` | Dev server di port **3003** |
+| Build | `bun run build` / `npm run build` | Build production (dengan `--no-lint`) |
+| Start | `bun run start` / `npm run start` | Production server di port **3003** |
+| Lint | `bun run lint` / `npm run lint` | Cek kode dengan ESLint |
 
 ---
 
@@ -244,31 +281,31 @@ Buka [http://localhost:3003](http://localhost:3003).
 ### Publik
 | Route | Deskripsi |
 |---|---|
-| `/` | Landing page — Hero, Stats, Features, Pricing, dll. |
-| `/login` | Login via OTP Gmail |
-| `/register` | Daftar akun via OTP Gmail |
+| `/` | Landing page — Hero, Stats, Features, Pricing, Roadmap, dll. |
+| `/login` | Login / Register via Google OAuth |
 
 ### Protected (wajib login)
 | Route | Deskripsi |
 |---|---|
 | `/dashboard` | Dashboard member — stats, quick links, aktivitas |
-| `/materi` | Kurikulum *(segera hadir)* |
-| `/challenges` | Automation challenges *(segera hadir)* |
-| `/botlab` | Bot Lab *(segera hadir)* |
-| `/roadmap` | Peta belajar *(segera hadir)* |
-| `/settings` | Pengaturan akun *(segera hadir)* |
+| `/materi` | Kurikulum terstruktur (Node.js, Automasi, Tools, dll.) |
+| `/challenges` | Automation challenges dengan tingkat kesulitan & reward poin |
+| `/botlab` | Eksperimental workspace (cURL to code, flow mapper, AI agent) |
+| `/roadmap` | Peta belajar dari fase Beginner hingga Master |
+| `/settings` | Pengaturan interaktif (Profil, Preferensi, Notifikasi, Keamanan) |
 
 ### API
 | Method | Route | Keterangan |
 |---|---|---|
-| `POST` | `/api/auth/send-otp` | Generate & kirim OTP ke email |
-| `POST` | `/api/auth/verify-otp` | Verifikasi OTP → set JWT cookie |
+| `POST` | `/api/auth/google` | Verifikasi Google ID Token → set JWT cookie |
 | `POST` | `/api/auth/logout` | Logout, clear cookie |
-| `GET` | `/api/auth/me` | Ambil data user dari JWT |
+| `GET` | `/api/auth/me` | Ambil data user dari JWT + database |
 
 ---
 
 ## 🐳 Deployment dengan Docker
+
+Proyek ini menggunakan **Bun** sebagai runtime di Docker (image `oven/bun:1-alpine`).
 
 ### Menggunakan Docker Compose (Direkomendasikan)
 ```bash
@@ -277,27 +314,29 @@ docker compose logs -f
 docker compose down
 ```
 
-> Pastikan `docker-compose.yml` sudah menyertakan semua environment variables.
-
 ### Environment Variables untuk Container
-```yaml
-environment:
-  - DATABASE_URL=postgresql://...
-  - JWT_SECRET=your-secret
-  - GMAIL_USER=akunmu@gmail.com
-  - GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
-  - NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
-  - TURNSTILE_SECRET_KEY=0x4AAAAAAA...
-  - NODE_ENV=production
-  - PORT=3003
-  - HOSTNAME=0.0.0.0
+Buat file `.env` di root proyek (atau set langsung di server):
+
+```env
+DATABASE_URL=postgresql://...
+JWT_SECRET=your-secret-min-32-chars
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=xxxxxxxxxxxx.apps.googleusercontent.com
+NODE_ENV=production
+PORT=3003
+HOSTNAME=0.0.0.0
 ```
 
+> `docker-compose.yml` sudah dikonfigurasi untuk membaca env vars dari file `.env` secara otomatis.
+
 ### Catatan Docker
-- Container menggunakan `restart: unless-stopped`.
-- Next.js telemetry dinonaktifkan (`NEXT_TELEMETRY_DISABLED=1`).
-- `libc6-compat` sudah ditambahkan agar SWC compiler tidak crash di Alpine.
-- Build **tidak memerlukan** env vars — semua dibaca saat runtime (lazy init).
+- Base image: `oven/bun:1-alpine` (multi-stage build: `deps` → `builder` → `runner`)
+- Package manager: **Bun** — `bun install --frozen-lockfile` & `bun run build`
+- Container menggunakan `restart: unless-stopped`
+- Next.js telemetry dinonaktifkan (`NEXT_TELEMETRY_DISABLED=1`)
+- `libc6-compat` ditambahkan agar SWC compiler tidak crash di Alpine
+- Next.js dikonfigurasi `output: "standalone"` — server dijalankan dengan `bun server.js`
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` di-embed ke JS bundle saat **build time** via Docker `ARG`
+- Build **tidak memerlukan** `DATABASE_URL` atau `JWT_SECRET` — dibaca saat runtime (lazy init)
 
 ---
 
@@ -307,10 +346,7 @@ environment:
 |---|---|---|
 | `DATABASE_URL` | Neon.tech PostgreSQL connection string | ✅ |
 | `JWT_SECRET` | Secret untuk sign/verify JWT (min 32 kar.) | ✅ |
-| `GMAIL_USER` | Alamat Gmail pengirim OTP | ✅ |
-| `GMAIL_APP_PASSWORD` | Gmail App Password (16 karakter) | ✅ |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (publik) | ✅ |
-| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret key (server) | ✅ |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google OAuth 2.0 Client ID (publik, di-embed saat build) | ✅ |
 | `NODE_ENV` | `production` / `development` | — |
 | `PORT` | Port aplikasi (default: `3003`) | — |
 | `HOSTNAME` | Bind address container (`0.0.0.0`) | — |

@@ -15,7 +15,3 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
 CREATE INDEX IF NOT EXISTS users_google_id_idx ON users (google_id);
-
--- ============================================================
--- Tabel otp_codes telah dihapus.
--- ============================================================

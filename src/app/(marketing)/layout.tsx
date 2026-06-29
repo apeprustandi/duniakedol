@@ -10,7 +10,25 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      {/* Animated particle background */}
+      {/* ── Background layers (sama dengan /login) ──────────── */}
+
+      {/* Ambient glow blobs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#00ff88]/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-[#00ff88]/3 rounded-full blur-3xl" />
+      </div>
+
+      {/* Grid pattern overlay */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px)",
+          backgroundSize: "50px 50px",
+        }}
+      />
+
+      {/* Animated particle background (di atas grid) */}
       <ParticleCanvas />
 
       {/* Fixed navigation */}

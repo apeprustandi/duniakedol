@@ -23,7 +23,7 @@ export default async function ProtectedLayout({
   return (
     <div className="flex h-screen bg-[#0a0f0a] overflow-hidden">
       {/* Sidebar */}
-      <DashboardSidebar user={user} />
+      <DashboardSidebar />
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">

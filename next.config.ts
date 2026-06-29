@@ -2,9 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  reactStrictMode: false, // Google SDK (accounts.id.initialize) tidak kompatibel dengan Strict Mode double-invoke
   typescript: {
     ignoreBuildErrors: true,
   },

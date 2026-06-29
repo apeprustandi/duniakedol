@@ -53,7 +53,15 @@ export async function setAuthCookie(token: string): Promise<void> {
 
 export async function clearAuthCookie(): Promise<void> {
   const store = await cookies();
-  store.delete(COOKIE_NAME);
+  // Gunakan set dengan maxAge:0 bukan delete() — lebih reliable di semua browser.
+  // Opsi harus identik dengan setAuthCookie agar browser benar-benar menghapus cookie.
+  store.set(COOKIE_NAME, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
 }
 
 export async function getTokenFromCookie(): Promise<string | null> {

@@ -3,16 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import { useToast } from "@/components/ui/ToastProvider";
 
 export default function LoginPage() {
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-
-  // Fallback if env variable is missing, though we should inform the user
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setLoading(true);
@@ -46,8 +43,7 @@ export default function LoginPage() {
   };
 
   return (
-    <GoogleOAuthProvider clientId={clientId}>
-      <div className="min-h-screen bg-[#0a0f0a] flex flex-col">
+    <div className="min-h-screen bg-[#0a0f0a] flex flex-col">
         {/* Ambient */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#00ff88]/5 rounded-full blur-3xl" />
@@ -73,7 +69,7 @@ export default function LoginPage() {
             <div className="bg-[#1a1f1a] border border-[#27272a] p-8 relative overflow-hidden hover:border-[#00ff88]/20 transition-colors duration-500">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#00ff88]/50 to-transparent" />
 
-              {!clientId && (
+              {!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
                 <div className="mb-4 p-3 bg-red-900/30 border border-red-500/50 text-red-200 text-xs rounded">
                   ⚠ NEXT_PUBLIC_GOOGLE_CLIENT_ID belum diatur di .env.local
                 </div>
@@ -94,7 +90,7 @@ export default function LoginPage() {
                       size="large"
                       text="continue_with"
                       shape="rectangular"
-                      width="100%"
+                      width={380}
                     />
                   </div>
                 )}
@@ -112,6 +108,5 @@ export default function LoginPage() {
           </div>
         </main>
       </div>
-    </GoogleOAuthProvider>
   );
 }

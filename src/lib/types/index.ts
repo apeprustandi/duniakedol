@@ -10,13 +10,6 @@ export interface Feature {
   delay?: number;
 }
 
-/* ── Section Header ───────────────────────────────────────── */
-export interface SectionHeaderProps {
-  tag: string;
-  title: string;
-  subtitle: string;
-}
-
 /* ── How It Works Step ────────────────────────────────────── */
 export interface Step {
   num: string;
@@ -67,15 +60,3 @@ export interface PricingTier {
   ctaClass: string;
 }
 
-/* ── Auth / User ───────────────────────────────────────────── */
-export interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface AuthResponse {
-  user?: User;
-  error?: string;
-}
